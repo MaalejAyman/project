@@ -12,7 +12,8 @@ const Users = {
       "Prenom": "Maalej",
       "Login": "mimox07@gmail.com",
       "Password": "12345",
-      "Nb_conge_rest": 10
+      "Nb_conge_rest": 10,
+      "Id_Chef":1
     },
     {
       "Id": 1,
@@ -28,7 +29,8 @@ const Users = {
       "Prenom": "Glaa",
       "Login": "ayman.maalej@esprit.tn",
       "Password": "44914395",
-      "Nb_conge_rest": 0
+      "Nb_conge_rest": 0,
+      "Id_Chef":0
     }
   ]
 };
@@ -62,6 +64,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return FlutterLogin(
       title: 'Gestion Congées',
       //logo: 'assets/images/ecorp-lightblue.png',
