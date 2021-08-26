@@ -4,7 +4,7 @@ class Conge{
   String Raison;
   DateTime? Date_Debut;
   DateTime? Date_Fin;
-  bool IsConfirmed;
+  int IsConfirmed;
 
   Conge(this.Id, this.Id_User, this.Raison, this.Date_Debut, this.Date_Fin,
       this.IsConfirmed);
