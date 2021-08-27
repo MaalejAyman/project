@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'AjoutConge.dart';
 import 'Conge.dart';
+import 'LoginInterface.dart';
 import 'User.dart';
 
 class MesConge extends StatefulWidget {
@@ -25,7 +27,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 0,
+        "Id": 1,
         "Id_User": 0,
         "IsConfirmed": 0,
         "Raison": "Maladie",
@@ -33,7 +35,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 0,
+        "Id": 2,
         "Id_User": 0,
         "IsConfirmed": 0,
         "Raison": "Maladie",
@@ -41,7 +43,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 0,
+        "Id": 3,
         "Id_User": 0,
         "IsConfirmed": 0,
         "Raison": "Maladie",
@@ -49,7 +51,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 0,
+        "Id": 4,
         "Id_User": 0,
         "IsConfirmed": 0,
         "Raison": "Maladie",
@@ -57,7 +59,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 7,
+        "Id": 5,
         "Id_User": 0,
         "IsConfirmed": 1,
         "Raison": "Maladie",
@@ -65,7 +67,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 8,
+        "Id": 6,
         "Id_User": 0,
         "IsConfirmed": 2,
         "Raison": "Maladie",
@@ -73,7 +75,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 1,
+        "Id": 7,
         "Id_User": 1,
         "IsConfirmed": 0,
         "Raison": "Travel",
@@ -81,7 +83,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 2,
+        "Id": 8,
         "Id_User": 2,
         "IsConfirmed": 0,
         "Raison": "Ete",
@@ -89,7 +91,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 3,
+        "Id":9,
         "Id_User": 2,
         "IsConfirmed": 0,
         "Raison": "Ete",
@@ -97,7 +99,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 4,
+        "Id": 10,
         "Id_User": 2,
         "IsConfirmed": 0,
         "Raison": "Ete",
@@ -105,7 +107,7 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 5,
+        "Id": 11,
         "Id_User": 2,
         "IsConfirmed": 1,
         "Raison": "Ete",
@@ -113,8 +115,8 @@ class MesCongestate extends State<MesConge> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 6,
-        "Id_User": 2,
+        "Id": 12,
+        "Id_User": 3,
         "IsConfirmed": 1,
         "Raison": "Ete",
         "DateDebut": "2020-07-10 15:00:00.000",
@@ -329,10 +331,55 @@ class MesCongestate extends State<MesConge> {
                   ),
                 ),
               ),
+              Container(
+                height: 80,
+              ),
             ],
           ),
         ),
       ),
+      floatingActionButton: hasChef(context),
     );
+  }
+  Widget? hasChef(BuildContext context) {
+    if (Login!.Id_Chef != null) {
+      return FloatingActionButton(
+        onPressed: () => {
+          print(this.Login!.Nb_conge_rest),
+          if (this.Login!.Nb_conge_rest > 0)
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AjoutConge(Login: this.Login)),
+              )
+            }
+          else
+            {
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Solde Congé epuisé'),
+                  content: const Text("vous n'avez plus de jours de congés"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              )
+            }
+        },
+        elevation: 10,
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 30.0,
+        ),
+      );
+    } else {
+      return null;
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project/AjoutConge.dart';
+import 'package:project/DemandesConges.dart';
 import 'package:project/MesConges.dart';
 import 'Conge.dart';
 import 'LoginInterface.dart';
@@ -16,7 +17,10 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  static const String _title = 'Gestion des Congées';
+  static List<Conge> List_CongesWait = [];
+  static List<Conge> List_CongesRef = [];
+  static List<Conge> List_CongesCon = [];
+  static const String _title = 'Gestion des Congés';
   static const Conges = {
     "conge": [
       {
@@ -29,6 +33,54 @@ class HomeState extends State<Home> {
       },
       {
         "Id": 1,
+        "Id_User": 0,
+        "IsConfirmed": 0,
+        "Raison": "Maladie",
+        "DateDebut": "2020-07-10 15:00:00.000",
+        "DateFin": "2020-07-10 15:00:00.000"
+      },
+      {
+        "Id": 2,
+        "Id_User": 0,
+        "IsConfirmed": 0,
+        "Raison": "Maladie",
+        "DateDebut": "2020-07-10 15:00:00.000",
+        "DateFin": "2020-07-10 15:00:00.000"
+      },
+      {
+        "Id": 3,
+        "Id_User": 0,
+        "IsConfirmed": 0,
+        "Raison": "Maladie",
+        "DateDebut": "2020-07-10 15:00:00.000",
+        "DateFin": "2020-07-10 15:00:00.000"
+      },
+      {
+        "Id": 4,
+        "Id_User": 0,
+        "IsConfirmed": 0,
+        "Raison": "Maladie",
+        "DateDebut": "2020-07-10 15:00:00.000",
+        "DateFin": "2020-07-10 15:00:00.000"
+      },
+      {
+        "Id": 5,
+        "Id_User": 0,
+        "IsConfirmed": 1,
+        "Raison": "Maladie",
+        "DateDebut": "2020-07-10 15:00:00.000",
+        "DateFin": "2020-07-10 15:00:00.000"
+      },
+      {
+        "Id": 6,
+        "Id_User": 0,
+        "IsConfirmed": 2,
+        "Raison": "Maladie",
+        "DateDebut": "2020-07-10 15:00:00.000",
+        "DateFin": "2020-07-10 15:00:00.000"
+      },
+      {
+        "Id": 7,
         "Id_User": 1,
         "IsConfirmed": 0,
         "Raison": "Travel",
@@ -36,7 +88,7 @@ class HomeState extends State<Home> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 2,
+        "Id": 8,
         "Id_User": 2,
         "IsConfirmed": 0,
         "Raison": "Ete",
@@ -44,7 +96,7 @@ class HomeState extends State<Home> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 3,
+        "Id": 9,
         "Id_User": 2,
         "IsConfirmed": 0,
         "Raison": "Ete",
@@ -52,15 +104,15 @@ class HomeState extends State<Home> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 4,
+        "Id": 10,
         "Id_User": 2,
         "IsConfirmed": 0,
-        "Raison": "Ete",
+        "Raison": "familiale",
         "DateDebut": "2020-07-10 15:00:00.000",
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 5,
+        "Id": 11,
         "Id_User": 2,
         "IsConfirmed": 1,
         "Raison": "Ete",
@@ -68,10 +120,10 @@ class HomeState extends State<Home> {
         "DateFin": "2020-07-10 15:00:00.000"
       },
       {
-        "Id": 6,
-        "Id_User": 2,
+        "Id": 12,
+        "Id_User": 3,
         "IsConfirmed": 0,
-        "Raison": "Ete",
+        "Raison": "covid",
         "DateDebut": "2020-07-10 15:00:00.000",
         "DateFin": "2020-07-10 15:00:00.000"
       }
@@ -98,12 +150,21 @@ class HomeState extends State<Home> {
       },
       {
         "Id": 2,
-        "Nom": "Mariem",
-        "Prenom": "Glaa",
+        "Nom": "Amine",
+        "Prenom": "Mami",
         "Login": "ayman.maalej@esprit.tn",
         "Password": "44914395",
         "Nb_conge_rest": 10,
-        "Id_Chef": 1
+        "Id_Chef": 0
+      },
+      {
+        "Id": 3,
+        "Nom": "Mariem",
+        "Prenom": "Glaa",
+        "Login": "Test",
+        "Password": "44914395",
+        "Nb_conge_rest": 2,
+        "Id_Chef": 0
       }
     ]
   };
@@ -126,6 +187,7 @@ class HomeState extends State<Home> {
         List_Conges.add(c);
       }
     }
+    InitListConge();
     return MaterialApp(
       title: _title,
       home: Scaffold(
@@ -141,10 +203,38 @@ class HomeState extends State<Home> {
                 color: Colors.white,
                 itemBuilder: (context) => [
                   PopupMenuItem<int>(
+                      value: 2,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.folder,
+                            color: Colors.blue,
+                          ),
+                          const SizedBox(
+                            width: 7,
+                          ),
+                          Text(
+                            "Demandes Congés",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ],
+                      )),
+                  PopupMenuItem<int>(
                       value: 0,
-                      child: Text(
-                        "Mes congées",
-                        style: TextStyle(color: Colors.blue),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.folder,
+                            color: Colors.blue,
+                          ),
+                          const SizedBox(
+                            width: 7,
+                          ),
+                          Text(
+                            "Mes congés",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ],
                       )),
                   PopupMenuDivider(),
                   PopupMenuItem<int>(
@@ -159,13 +249,13 @@ class HomeState extends State<Home> {
                             width: 7,
                           ),
                           Text(
-                            "Logout",
+                            "se déconnecter",
                             style: TextStyle(color: Colors.blue),
                           )
                         ],
                       )),
                 ],
-                onSelected: (item) => SelectedItem(context, item,Login),
+                onSelected: (item) => SelectedItem(context, item, Login),
               ),
             ),
           ],
@@ -212,76 +302,125 @@ class HomeState extends State<Home> {
                 ),
                 Expanded(
                   flex: 9,
-                  child: Container(
-                    color: Colors.transparent,
-                    child: ListView.separated(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: List_Conges.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (List_Conges.isNotEmpty) {
-                          return InkWell(
-                            onTap: () {
-                              showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  title: const Text('confirmer congé'),
-                                  content: Text(
-                                      '${getUserWithId(List_Conges[index].Id_User).Nom} ${getUserWithId(List_Conges[index].Id_User).Prenom} : "${List_Conges[index].Raison}"\n'
-                                      'Date debut : ${List_Conges[index].Date_Debut!.day}-${List_Conges[index].Date_Debut!.month}-${List_Conges[index].Date_Debut!.year}\n'
-                                      'Date fin :   ${List_Conges[index].Date_Fin!.day}-${List_Conges[index].Date_Fin!.month}-${List_Conges[index].Date_Fin!.year}'),
-                                  actions: <Widget>[
-                                    Row(
-                                      children: [
-                                        TextButton(
-                                          onPressed: () => setState(() => {
-                                                changeCongestateRef(
-                                                    List_Conges[index],
-                                                    List_Conges),
-                                                Navigator.pop(
-                                                    context, 'refuser')
-                                              }),
-                                          child: const Text('refuser'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () => setState(() => {
-                                                changeCongestateConf(
-                                                    List_Conges[index],
-                                                    List_Conges),
-                                                Navigator.pop(
-                                                    context, 'Confirmer'),
-                                              }),
-                                          child: const Text('Confirmer'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context, 'Retour'),
-                                          child: const Text('Retour'),
-                                        ),
-                                      ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.blueAccent),
+                                elevation:
+                                    MaterialStateProperty.all<double>(100),
+                              ),
+                              onPressed: () {Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => MesConge(Login: Login)));},
+                              child: Container(
+                                child: SizedBox.expand(
+                                  child: Container(
+                                    child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                    )
-                                  ],
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Mes Congés",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 40,
+                                          ),
+                                        ),
+                                        Divider(
+                                          indent: 70,
+                                          endIndent: 70,
+                                          color: Colors.white,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text("En attente : " +
+                                                List_CongesWait.length
+                                                    .toString() +
+                                                ""),
+                                            Text("Refusés     : " +
+                                                List_CongesRef.length
+                                                    .toString() +
+                                                ""),
+                                            Text("Acceptés   : " +
+                                                List_CongesCon.length
+                                                    .toString() +
+                                                ""),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              );
-                            },
-                            child: Container(
-                              height: 50,
-                              color: Colors
-                                  .amber[colorCodes[index % colorCodes.length]],
-                              child: Center(
-                                  child: Text(
-                                      '${getUserWithId(List_Conges[index].Id_User).Nom} ${getUserWithId(List_Conges[index].Id_User).Prenom} : "${List_Conges[index].Raison}"')),
+                              ),
                             ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      },
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(
+                          ),
+                          Divider(
+                            height: 40,
                             color: Colors.white,
                           ),
+                          Expanded(
+                            flex: 1,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.blueAccent),
+                                elevation:
+                                    MaterialStateProperty.all<double>(100),
+                              ),
+                              onPressed: () {Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => DemandesConges(Login: Login)));},
+                              child: Container(
+                                child: SizedBox.expand(
+                                  child: Container(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Demandes Congés",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 40,
+                                          ),
+                                        ),
+                                        Divider(
+                                          indent: 20,
+                                          endIndent: 20,
+                                          color: Colors.white,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text("En attente : " +
+                                                List_Conges.length
+                                                    .toString() +
+                                                ""),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 70,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -346,20 +485,78 @@ class HomeState extends State<Home> {
     }
   }
 
+  void InitListConge() {
+    List_CongesWait = [];
+    List_CongesRef = [];
+    List_CongesCon = [];
+    for (int i = 0; i < Conges["conge"]!.length; i++) {
+      Conge c = Conge.fromJson(Conges["conge"]!.elementAt(i));
+      if (c.Id_User == Login!.Id) {
+        switch (c.IsConfirmed) {
+          case 0:
+            {
+              List_CongesWait.add(c);
+            }
+            break;
+          case 1:
+            {
+              List_CongesCon.add(c);
+            }
+            break;
+          case 2:
+            {
+              List_CongesRef.add(c);
+            }
+            break;
+          default:
+            {}
+            break;
+        }
+      }
+    }
+  }
+
   HomeState(this.Login);
 }
 
-void SelectedItem(BuildContext context, item,User? Login) {
+void SelectedItem(BuildContext context, item, User? Login) {
   switch (item) {
     case 0:
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => MesConge(Login: Login)));
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => MesConge(Login: Login)));
       break;
     case 1:
-      print("User Logged out");
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-          (route) => false);
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('se déconnecter'),
+          content: Text("voulez vous vraiment déconnecter ?"),
+          actions: <Widget>[
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Retour'),
+                  child: const Text('Annuler'),
+                ),
+                TextButton(
+                  onPressed: () => {
+                    Navigator.pop(context, 'oui'),
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (route) => false)
+                  },
+                  child: const Text('oui'),
+                )
+              ],
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            )
+          ],
+        ),
+      );
+      break;
+    case 2:
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => DemandesConges(Login: Login)));
       break;
   }
 }

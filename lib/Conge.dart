@@ -26,7 +26,6 @@ class Conge{
     'DateFin': Date_Fin,
     'IsConfirmed': IsConfirmed
   };
-
   @override
   String toString() {
     return 'Conge{Id: $Id, Id_User: $Id_User, Raison: $Raison, Date_Debut: $Date_Debut, Date_Fin: $Date_Fin, IsConfirmed: $IsConfirmed}';

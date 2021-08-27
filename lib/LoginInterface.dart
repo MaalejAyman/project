@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/flutter_login.dart';
 import 'Home.dart';
 import 'User.dart';
@@ -58,7 +57,6 @@ class LoginScreen extends StatelessWidget {
       if (true) {
         return 'User not exists';
       }
-      //return users[name].toString();
     });
   }
 
