@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,17 +43,17 @@ class LoginScreen extends StatelessWidget {
       "https://backend-uniges.pmc.tn/api/users/login";
   Duration get loginTime => Duration(milliseconds: 2500);
   Future<String?> _authUser(LoginData data) {
-    print('Name: ${data.name}, Password: ${data.password}');
     var body = jsonEncode( {
       'username': data.name,
       'password': data.password
     });
     Future<User?> fetchLogin() async {
-      final response = await http.Client().post(Uri.parse(url),
-          body: body,headers: {
-          "Accept": "application/json",
-          "content-type": "application/json"
-          });
+      try {
+        final response = await http.Client().post(Uri.parse(url),
+            body: body, headers: {
+              "Accept": "application/json",
+              "content-type": "application/json"
+            });
         if (!response.body.contains("Failure")) {
           final parsed =
           jsonDecode(response.body);
@@ -66,27 +67,33 @@ class LoginScreen extends StatelessWidget {
               1,
               10,
               u.Token);
-        }else{
-        return null;
+        } else {
+          return null;
         }
+      }on SocketException catch (_) {
+        return User(
+            -1,
+            "",
+            "",
+            "",
+            "",
+            -1,
+            -1,
+            "null");
+      }
     }
     return Future.delayed(loginTime).then((_) async {
       final User? u = await fetchLogin();
       if(u!=null){
-        loggedIn=u;
-        return '';
+        if(u.Token!="null") {
+          loggedIn = u;
+          return '';
+        }else{
+          return 'Verifier votre connection au serveur !';
+        }
       }else{
-        return 'User not exists';
+        return "Utilisateur n'existe pas";
       }
-      /*var res=check(data.name);
-      if (res == null) {
-        return 'User not exists';
-      }
-      if (Users["users"]!.elementAt(res)["Password"]!=data.password) {
-        return 'Password does not match';
-      }
-      loggedIn=User.fromJson(Users["users"]!.elementAt(res));
-      return '';*/
     });
   }
 

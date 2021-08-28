@@ -141,18 +141,19 @@ class HomeState extends State<Home> {
   String urlFetchOwnConge =
       "https://backend-uniges.pmc.tn/api/recherche/tbdata?tablere=avtConge";
   @override
-  void initState() async {
+  void initState() {
+    List_CongesOwn = [];
     super.initState();
-    this.List_CongesOwn = await this.fetchListOwnConge();
+    Updatelist();
   }
   Future<void> Updatelist() async {
-    this.List_CongesOwn = await this.fetchListOwnConge();
+    this.List_CongesOwn = (await this.fetchListOwnConge());
     InitListConge();
   }
   Future<List<Conge>> fetchListOwnConge() async {
-    final response = await http.Client().get(Uri.parse(urlFetchOwnConge),
-        headers: {"Authorization": "Bearer "+Login!.Token});
-    return await parseConge(response.body);
+      final response = await http.Client().get(Uri.parse(urlFetchOwnConge),
+          headers: {"Authorization": "Bearer " + Login!.Token});
+      return await parseConge(response.body);
   }
   Future<List<Conge>> parseConge(String body) async {
     final parsed = jsonDecode(body).cast<Map<String, dynamic>>();
@@ -160,16 +161,8 @@ class HomeState extends State<Home> {
   }
   @override
   Widget build(BuildContext context) {
+    Updatelist();
     List_Conges = [];
-    /*for (int i = 0; i < Conges["conge"]!.length; i++) {
-      c = Conge.fromJson(Conges["conge"]!.elementAt(i));
-      if (c.IsConfirmed == 0
-          //&& getUserWithId(c.Id_User).Id_Chef == loggedIn!.Id
-          ) {
-        List_Conges.add(c);
-      }
-    }*/
-    InitListConge();
     return MaterialApp(
       title: _title,
       home: Scaffold(
