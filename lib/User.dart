@@ -6,7 +6,7 @@ class User {
   String? Prenom;
   int? Id_Chef;
   int? Nb_conge_rest;
-  String? Token;
+  String Token;
 
   User(this.Id, this.Login, this.Password, this.Nom, this.Prenom, this.Id_Chef,
       this.Nb_conge_rest,this.Token);

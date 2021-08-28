@@ -288,7 +288,7 @@ class DemandesCongesstate extends State<DemandesConges> {
       );
   }
 
-  User getUserWithId(int id) {
+  User getUserWithId(int? id) {
     var res = null;
     List_Users.forEach((element) {
       if (element.Id == id) {

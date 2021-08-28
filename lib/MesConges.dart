@@ -8,158 +8,25 @@ import 'User.dart';
 
 class MesConge extends StatefulWidget {
   final User? Login;
-  const MesConge({Key? key, required this.Login}) : super(key: key);
+  final List<Conge> List_CongesWait;
+  final List<Conge> List_CongesRef;
+  final List<Conge> List_CongesCon;
+  const MesConge({Key? key, required this.Login, required this.List_CongesWait, required this.List_CongesRef, required this.List_CongesCon}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    return MesCongestate(Login);
+    return MesCongestate(Login, this.List_CongesWait, this.List_CongesRef, this.List_CongesCon);
   }
 }
 
 class MesCongestate extends State<MesConge> {
-  static const Conges = {
-    "conge": [
-      {
-        "Id": 0,
-        "Id_User": 0,
-        "IsConfirmed": 0,
-        "Raison": "Maladie",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 1,
-        "Id_User": 0,
-        "IsConfirmed": 0,
-        "Raison": "Maladie",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 2,
-        "Id_User": 0,
-        "IsConfirmed": 0,
-        "Raison": "Maladie",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 3,
-        "Id_User": 0,
-        "IsConfirmed": 0,
-        "Raison": "Maladie",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 4,
-        "Id_User": 0,
-        "IsConfirmed": 0,
-        "Raison": "Maladie",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 5,
-        "Id_User": 0,
-        "IsConfirmed": 1,
-        "Raison": "Maladie",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 6,
-        "Id_User": 0,
-        "IsConfirmed": 2,
-        "Raison": "Maladie",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 7,
-        "Id_User": 1,
-        "IsConfirmed": 0,
-        "Raison": "Travel",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 8,
-        "Id_User": 2,
-        "IsConfirmed": 0,
-        "Raison": "Ete",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id":9,
-        "Id_User": 2,
-        "IsConfirmed": 0,
-        "Raison": "Ete",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 10,
-        "Id_User": 2,
-        "IsConfirmed": 0,
-        "Raison": "Ete",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 11,
-        "Id_User": 2,
-        "IsConfirmed": 1,
-        "Raison": "Ete",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      },
-      {
-        "Id": 12,
-        "Id_User": 3,
-        "IsConfirmed": 1,
-        "Raison": "Ete",
-        "DateDebut": "2020-07-10 15:00:00.000",
-        "DateFin": "2020-07-10 15:00:00.000"
-      }
-    ]
-  };
   static const List<int> colorCodes = <int>[600, 200];
-  static List<Conge> List_CongesWait = [];
-  static List<Conge> List_CongesRef = [];
-  static List<Conge> List_CongesCon = [];
-  MesCongestate(this.Login);
+  MesCongestate(this.Login, this.List_CongesWait, this.List_CongesRef, this.List_CongesCon);
   final User? Login;
+  final List<Conge> List_CongesWait;
+  final List<Conge> List_CongesRef;
+  final List<Conge> List_CongesCon;
   @override
   Widget build(BuildContext context) {
-    List_CongesWait = [];
-    List_CongesRef = [];
-    List_CongesCon = [];
-    for (int i = 0; i < Conges["conge"]!.length; i++) {
-      Conge c = Conge.fromJson(Conges["conge"]!.elementAt(i));
-      if (c.Id_User == Login!.Id) {
-        switch (c.IsConfirmed) {
-          case 0:
-            {
-              List_CongesWait.add(c);
-            }
-            break;
-          case 1:
-            {
-              List_CongesCon.add(c);
-            }
-            break;
-          case 2:
-            {
-              List_CongesRef.add(c);
-            }
-            break;
-          default:
-            {}
-            break;
-        }
-      }
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Mes Congées"),

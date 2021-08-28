@@ -53,23 +53,13 @@ class LoginScreen extends StatelessWidget {
           "Accept": "application/json",
           "content-type": "application/json"
           });
-            print(!response.body.contains("Failure"));
         if (!response.body.contains("Failure")) {
           final parsed =
           jsonDecode(response.body);
           var u = User.fromJson(parsed);
-          print(User(
-              0,
-              "a",
-              "b",
-              "c",
-              "d",
-              1,
-              10,
-              u.Token));
           return User(
-              0,
-              "a",
+              0233,
+              data.name,
               "b",
               "c",
               "d",

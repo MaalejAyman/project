@@ -1,21 +1,25 @@
 class Conge{
   int Id;
-  int Id_User;
-  String Raison;
+  int? Id_User;
+  String? Raison;
   DateTime? Date_Debut;
   DateTime? Date_Fin;
-  int IsConfirmed;
+  int? Nature;
+  int? IsConfirmed;
+  int? NbreJour;
 
   Conge(this.Id, this.Id_User, this.Raison, this.Date_Debut, this.Date_Fin,
       this.IsConfirmed);
   //from Json to Conge
   Conge.fromJson(Map<String, dynamic> json)
-      : Id = json['Id'],
-        Id_User = json['Id_User'],
-        Raison = json['Raison'],
-        Date_Debut = DateTime.parse(json['DateDebut'].toString()),
-        Date_Fin = DateTime.parse(json['DateFin'].toString()),
-        IsConfirmed = json['IsConfirmed']
+      : Id = json['Conge_Id'],
+        Nature= json['Conge_Nature'],
+        Id_User = int.parse(json['Perso_Matricule']),
+        Raison = json['Conge_Commentaire'],
+        Date_Debut = DateTime.parse(json['Conge_DateDebut'].toString()),
+        Date_Fin = DateTime.parse(json['Conge_DateFin'].toString()),
+        IsConfirmed = json['Conge_Etat'],
+        NbreJour = json['Conge_NbrJour']
   ;
   //from Conge to Json
   Map<String, dynamic> toJson() => {

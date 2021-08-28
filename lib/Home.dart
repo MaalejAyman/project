@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project/AjoutConge.dart';
@@ -6,6 +9,7 @@ import 'package:project/MesConges.dart';
 import 'Conge.dart';
 import 'LoginInterface.dart';
 import 'User.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.Login}) : super(key: key);
@@ -129,71 +133,59 @@ class HomeState extends State<Home> {
       }
     ]
   };
-  static const Users = {
-    "users": [
-      {
-        "Id": 0,
-        "Nom": "Ayman",
-        "Prenom": "Maalej",
-        "Login": "mimox07@gmail.com",
-        "Password": "12345",
-        "Nb_conge_rest": 10,
-        "Id_Chef": 1
-      },
-      {
-        "Id": 1,
-        "Nom": "Anas",
-        "Prenom": "Zitoun",
-        "Login": "maalej.ayman98@gmail.com",
-        "Password": "20914395",
-        "Nb_conge_rest": 5,
-      },
-      {
-        "Id": 2,
-        "Nom": "Amine",
-        "Prenom": "Mami",
-        "Login": "ayman.maalej@esprit.tn",
-        "Password": "44914395",
-        "Nb_conge_rest": 10,
-        "Id_Chef": 0
-      },
-      {
-        "Id": 3,
-        "Nom": "Mariem",
-        "Prenom": "Glaa",
-        "Login": "Test",
-        "Password": "44914395",
-        "Nb_conge_rest": 2,
-        "Id_Chef": 0
-      }
-    ]
-  };
   static const List<int> colorCodes = <int>[600, 200];
   static List<Conge> List_Conges = [];
-  static List<User> List_Users = [];
+  List<Conge> List_CongesOwn = [];
   final User? Login;
   var c;
+  String urlFetchOwnConge =
+      "https://backend-uniges.pmc.tn/api/recherche/tbdata?tablere=avtConge";
+  @override
+  void initState() async {
+    super.initState();
+    this.List_CongesOwn = await this.fetchListOwnConge();
+  }
+  Future<void> Updatelist() async {
+    this.List_CongesOwn = await this.fetchListOwnConge();
+    InitListConge();
+  }
+  Future<List<Conge>> fetchListOwnConge() async {
+    final response = await http.Client().get(Uri.parse(urlFetchOwnConge),
+        headers: {"Authorization": "Bearer "+Login!.Token});
+    return await parseConge(response.body);
+  }
+  Future<List<Conge>> parseConge(String body) async {
+    final parsed = jsonDecode(body).cast<Map<String, dynamic>>();
+    return await parsed.map<Conge>((json) => Conge.fromJson(json)).toList();
+  }
   @override
   Widget build(BuildContext context) {
     List_Conges = [];
-    List_Users = [];
-    for (int i = 0; i < Users["users"]!.length; i++) {
-      List_Users.add(User.fromJson(Users["users"]!.elementAt(i)));
-    }
-    for (int i = 0; i < Conges["conge"]!.length; i++) {
+    /*for (int i = 0; i < Conges["conge"]!.length; i++) {
       c = Conge.fromJson(Conges["conge"]!.elementAt(i));
-      if (c.IsConfirmed == 0 &&
-          getUserWithId(c.Id_User).Id_Chef == loggedIn!.Id) {
+      if (c.IsConfirmed == 0
+          //&& getUserWithId(c.Id_User).Id_Chef == loggedIn!.Id
+          ) {
         List_Conges.add(c);
       }
-    }
+    }*/
     InitListConge();
     return MaterialApp(
       title: _title,
       home: Scaffold(
         appBar: AppBar(
-          title: Text(_title),
+          title: Row(
+            children: [
+              Icon(Icons.home),
+              Text("   "+_title),
+            ],
+          ),
           actions: [
+            IconButton(onPressed: (){
+                setState(() {
+                  Updatelist();
+                });
+            }, icon: Icon(Icons.refresh)),
             Theme(
               data: Theme.of(context).copyWith(
                   textTheme: TextTheme().apply(bodyColor: Colors.blue),
@@ -255,7 +247,7 @@ class HomeState extends State<Home> {
                         ],
                       )),
                 ],
-                onSelected: (item) => SelectedItem(context, item, Login),
+                onSelected: (item) => SelectedItem(context, item, Login,List_CongesCon,List_CongesRef,List_CongesWait),
               ),
             ),
           ],
@@ -281,7 +273,7 @@ class HomeState extends State<Home> {
                               vertical: 5.0, horizontal: 8.0),
                           child: Center(
                             child: Text(
-                              "Bonjour " + Login!.Prenom! + " " + Login!.Nom!,
+                              "Bonjour " + Login!.Login!,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontStyle: FontStyle.italic,
@@ -318,8 +310,11 @@ class HomeState extends State<Home> {
                                 elevation:
                                     MaterialStateProperty.all<double>(100),
                               ),
-                              onPressed: () {Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) => MesConge(Login: Login)));},
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        MesConge(Login: Login,List_CongesCon: List_CongesCon,List_CongesRef: List_CongesRef,List_CongesWait: List_CongesWait,)));
+                              },
                               child: Container(
                                 child: SizedBox.expand(
                                   child: Container(
@@ -378,8 +373,11 @@ class HomeState extends State<Home> {
                                 elevation:
                                     MaterialStateProperty.all<double>(100),
                               ),
-                              onPressed: () {Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => DemandesConges(Login: Login)));},
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        DemandesConges(Login: Login)));
+                              },
                               child: Container(
                                 child: SizedBox.expand(
                                   child: Container(
@@ -404,8 +402,7 @@ class HomeState extends State<Home> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text("En attente : " +
-                                                List_Conges.length
-                                                    .toString() +
+                                                List_Conges.length.toString() +
                                                 ""),
                                           ],
                                         )
@@ -433,7 +430,7 @@ class HomeState extends State<Home> {
     );
   }
 
-  User getUserWithId(int id) {
+  /*User getUserWithId(int id) {
     var res = null;
     List_Users.forEach((element) {
       if (element.Id == id) {
@@ -441,7 +438,7 @@ class HomeState extends State<Home> {
       }
     });
     return res;
-  }
+  }*/
 
   Widget? hasChef(BuildContext context) {
     if (loggedIn!.Id_Chef != null) {
@@ -488,29 +485,27 @@ class HomeState extends State<Home> {
     List_CongesWait = [];
     List_CongesRef = [];
     List_CongesCon = [];
-    for (int i = 0; i < Conges["conge"]!.length; i++) {
-      Conge c = Conge.fromJson(Conges["conge"]!.elementAt(i));
-      if (c.Id_User == Login!.Id) {
-        switch (c.IsConfirmed) {
-          case 0:
-            {
-              List_CongesWait.add(c);
-            }
-            break;
-          case 1:
-            {
-              List_CongesCon.add(c);
-            }
-            break;
-          case 2:
-            {
-              List_CongesRef.add(c);
-            }
-            break;
-          default:
-            {}
-            break;
-        }
+    for (int i = 0; i < List_CongesOwn.length; i++) {
+      Conge c = List_CongesOwn.elementAt(i);
+      switch (c.IsConfirmed) {
+        case 0:
+          {
+            List_CongesWait.add(c);
+          }
+          break;
+        case 1:
+          {
+            List_CongesCon.add(c);
+          }
+          break;
+        case 2:
+          {
+            List_CongesRef.add(c);
+          }
+          break;
+        default:
+          {}
+          break;
       }
     }
   }
@@ -518,11 +513,11 @@ class HomeState extends State<Home> {
   HomeState(this.Login);
 }
 
-void SelectedItem(BuildContext context, item, User? Login) {
+void SelectedItem(BuildContext context, item, User? Login,List_CongesCon,List_CongesRef,List_CongesWait) {
   switch (item) {
     case 0:
       Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => MesConge(Login: Login)));
+          MaterialPageRoute(builder: (context) => MesConge(Login: Login,List_CongesCon: List_CongesCon,List_CongesRef: List_CongesRef,List_CongesWait: List_CongesWait,)));
       break;
     case 1:
       showDialog<String>(
