@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'Home.dart';
 import 'User.dart';
+import 'package:http/http.dart' as http;
 const Users = {
   "users": [
     {
@@ -35,11 +38,57 @@ const Users = {
 };
 User? loggedIn;
 class LoginScreen extends StatelessWidget {
-  Duration get loginTime => Duration(milliseconds: 2250);
-  Future<String> _authUser(LoginData data) {
+  final String url =
+      "https://backend-uniges.pmc.tn/api/users/login";
+  Duration get loginTime => Duration(milliseconds: 2500);
+  Future<String?> _authUser(LoginData data) {
     print('Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(loginTime).then((_) {
-      var res=check(data.name);
+    var body = jsonEncode( {
+      'username': data.name,
+      'password': data.password
+    });
+    Future<User?> fetchLogin() async {
+      final response = await http.Client().post(Uri.parse(url),
+          body: body,headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+          });
+            print(!response.body.contains("Failure"));
+        if (!response.body.contains("Failure")) {
+          final parsed =
+          jsonDecode(response.body);
+          var u = User.fromJson(parsed);
+          print(User(
+              0,
+              "a",
+              "b",
+              "c",
+              "d",
+              1,
+              10,
+              u.Token));
+          return User(
+              0,
+              "a",
+              "b",
+              "c",
+              "d",
+              1,
+              10,
+              u.Token);
+        }else{
+        return null;
+        }
+    }
+    return Future.delayed(loginTime).then((_) async {
+      final User? u = await fetchLogin();
+      if(u!=null){
+        loggedIn=u;
+        return '';
+      }else{
+        return 'User not exists';
+      }
+      /*var res=check(data.name);
       if (res == null) {
         return 'User not exists';
       }
@@ -47,7 +96,7 @@ class LoginScreen extends StatelessWidget {
         return 'Password does not match';
       }
       loggedIn=User.fromJson(Users["users"]!.elementAt(res));
-      return '';
+      return '';*/
     });
   }
 
@@ -64,6 +113,12 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return FlutterLogin(
+      userValidator: (value){
+      if (value!.isEmpty) {
+        return 'Invalid Username';
+      }
+      return null;
+    },
       title: 'Gestion Congées',
       //logo: 'assets/images/ecorp-lightblue.png',
       onLogin: _authUser,

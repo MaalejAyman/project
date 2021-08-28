@@ -1,14 +1,15 @@
 class User {
-  int Id;
-  String Login;
+  int? Id;
+  String? Login;
   String? Password;
-  String Nom;
-  String Prenom;
+  String? Nom;
+  String? Prenom;
   int? Id_Chef;
-  int Nb_conge_rest;
+  int? Nb_conge_rest;
+  String? Token;
 
   User(this.Id, this.Login, this.Password, this.Nom, this.Prenom, this.Id_Chef,
-      this.Nb_conge_rest);
+      this.Nb_conge_rest,this.Token);
 
   @override
   String toString() {
@@ -23,7 +24,9 @@ class User {
         Nom = json['Nom'],
         Prenom = json['Prenom'],
         Id_Chef = json['Id_Chef'],
-        Nb_conge_rest = json['Nb_conge_rest'];
+        Nb_conge_rest = json['Nb_conge_rest'],
+        Token = json['accessToken']
+  ;
 
   //from User to Json
   Map<String, dynamic> toJson() => {

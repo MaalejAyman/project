@@ -281,7 +281,7 @@ class HomeState extends State<Home> {
                               vertical: 5.0, horizontal: 8.0),
                           child: Center(
                             child: Text(
-                              "Bonjour " + Login!.Prenom + " " + Login!.Nom,
+                              "Bonjour " + Login!.Prenom! + " " + Login!.Nom!,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontStyle: FontStyle.italic,
@@ -447,8 +447,7 @@ class HomeState extends State<Home> {
     if (loggedIn!.Id_Chef != null) {
       return FloatingActionButton(
         onPressed: () => {
-          print(this.Login!.Nb_conge_rest),
-          if (this.Login!.Nb_conge_rest > 0)
+          if (this.Login!.Nb_conge_rest! > 0)
             {
               Navigator.push(
                 context,

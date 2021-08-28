@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'Conge.dart';
-import 'DiverSys.dart';
-import 'DiverSys.dart';
 import 'DiverSys.dart';
 import 'User.dart';
 import 'package:http/http.dart' as http;
@@ -19,25 +18,18 @@ class AjoutConge extends StatefulWidget {
 }
 
 class AjoutCongestate extends State<AjoutConge> {
-  late Future<List<DiverSys>> Divers;
+  late List data;
+  final String url =
+      "https://backend-uniges.pmc.tn/api/ds/formdata?code=DiverSys&val=CONGER01";
+  List<DiverSys> parseDiverSys(String responseBody) {
+    final parsed =
+        jsonDecode(responseBody)["DiverSys"].cast<Map<String, dynamic>>();
+    return parsed.map<DiverSys>((json) => DiverSys.fromJson(json)).toList();
+  }
+
   Future<List<DiverSys>> fetchListDiverSys() async {
-    List<DiverSys> Diver = [];
-    final response = await http.get(Uri.parse(
-        'https://backend-uniges.pmc.tn/api/ds/formdata?code=DiverSys&val=CONGER01'));
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      var l = json.decode(response.body)["DiverSys"];
-      for (int i = 0; i < l.length; i++) {
-        var d = DiverSys.fromJson(l.elementAt(i));
-        Diver.add(d);
-      }
-      return Diver;
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load list');
-    }
+    final response = await http.Client().get(Uri.parse(url));
+    return parseDiverSys(response.body);
   }
 
   final _raisonController = TextEditingController();
@@ -73,109 +65,145 @@ class AjoutCongestate extends State<AjoutConge> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    this.fetchListDiverSys();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Divers = fetchListDiverSys();
+    var currentSelectedValue;
     return Scaffold(
       appBar: AppBar(
         title: Text("Demander Congé"),
       ),
       body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("Assets/Image/background.webp"),
+                fit: BoxFit.cover)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
               decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("Assets/Image/background.webp"),
-                      fit: BoxFit.cover)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        border: Border.all(color: Colors.white, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    height: 300,
-                    child: Form(
-                      key: _formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            TextFormField(
-                              controller: _raisonController,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'raison du congé'),
-                              // The validator receives the text that the user has entered.
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "S'il vous plait remplir ce champ";
-                                }
-                                return null;
-                              },
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Date debut :  "),
-                                Text(
-                                    "${selectedDateD.toLocal()}".split(' ')[0]),
-                                SizedBox(
-                                  height: 15.0,
-                                ),
-                                RaisedButton(
-                                  onPressed: () => _selectDateD(context),
-                                  child: Icon(Icons.calendar_today_rounded),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Date fin :         "),
-                                Text(
-                                    "${selectedDateF.toLocal()}".split(' ')[0]),
-                                SizedBox(
-                                  height: 15.0,
-                                ),
-                                RaisedButton(
-                                  onPressed: () => _selectDateF(context),
-                                  child: Icon(Icons.calendar_today_rounded),
-                                ),
-                              ],
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Validate returns true if the form is valid, or false otherwise.
-                                if (_formKey.currentState!.validate()) {
-                                  var s = _raisonController.text +
-                                      " " +
-                                      selectedDateD.toString() +
-                                      " " +
-                                      selectedDateF.toString();
-                                  Conge newConge = Conge(
-                                      10,
-                                      Login!.Id,
-                                      _raisonController.text,
-                                      selectedDateD,
-                                      selectedDateF,
-                                      0);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("congé demandé")),
-                                  );
-                                  Navigator.pop(context);
-                                }
-                              },
-                              child: const Text('Submit'),
-                            ),
-                          ],
-                        ),
+                  color: Colors.white.withOpacity(0.2),
+                  border: Border.all(color: Colors.white, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              height: 300,
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        controller: _raisonController,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'raison du congé'),
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "S'il vous plait remplir ce champ";
+                          }
+                          return null;
+                        },
                       ),
-                    ),
+                      FutureBuilder<List<DiverSys>>(
+                        future: fetchListDiverSys(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Center(
+                              child: Text('An error has occurred!'),
+                            );
+                          } else if (snapshot.hasData) {
+                            return DropdownButtonFormField(
+                              hint: Text("Choisir le type de congé"),
+                              value: currentSelectedValue,
+                              isDense: true,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  currentSelectedValue = newValue;
+                                });
+                                print(currentSelectedValue);
+                              },
+                              items:snapshot.data!
+                                  .map<DropdownMenuItem<int>>((DiverSys value) {
+                                return DropdownMenuItem<int>(
+                                  value: value.Id,
+                                  child: Text(value.Titre),
+                                );
+                              }).toList(),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Date debut :  "),
+                          Text("${selectedDateD.toLocal()}".split(' ')[0]),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          RaisedButton(
+                            onPressed: () => _selectDateD(context),
+                            child: Icon(Icons.calendar_today_rounded),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Date fin :         "),
+                          Text("${selectedDateF.toLocal()}".split(' ')[0]),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          RaisedButton(
+                            onPressed: () => _selectDateF(context),
+                            child: Icon(Icons.calendar_today_rounded),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Validate returns true if the form is valid, or false otherwise.
+                          if (_formKey.currentState!.validate()) {
+                            var s = _raisonController.text +
+                                " " +
+                                selectedDateD.toString() +
+                                " " +
+                                selectedDateF.toString();
+                            Conge newConge = Conge(
+                                10,
+                                Login!.Id!,
+                                _raisonController.text,
+                                selectedDateD,
+                                selectedDateF,
+                                0);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("congé demandé")),
+                            );
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('Submit'),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 
